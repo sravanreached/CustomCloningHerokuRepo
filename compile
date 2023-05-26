@@ -17,26 +17,6 @@ if [[ -z $CLONE_REPO_BRANCH ]]; then
     exit 1
 fi
 
-if [[ $GIT_SSH_KEY ]]; then
-  GIT_SSH_KEY=$(<"$ENV_DIR/GIT_SSH_KEY")
-  cd "$APP_DIR"
-  
-  # install the ssh key
-  cat "$ENV_DIR/GIT_SSH_KEY" > ~/.ssh/id_rsa
-  chmod 600 ~/.ssh/id_rsa
-  echo "-----> Installed SSH key from GIT_SSH_KEY"
-fi
-
-# ignore/hide ssh warnings
-mkdir -p ~/.ssh
-ssh-keyscan -H github.com >> ~/.ssh/known_hosts 2> /dev/null
-echo "Host *" >> ~/.ssh/config
-echo "   StrictHostKeyChecking no" >> ~/.ssh/config
-echo "   UserKnownHostsFile /dev/null" >> ~/.ssh/config
-echo "   LogLevel ERROR" >> ~/.ssh/config
-echo "-----> Created .ssh/config"
-
-
 git clone -b $CLONE_REPO_BRANCH --depth 1 --recursive --shallow-submodules $CLONE_REPO_URL $APP_DIR/database
 rm -rf .git
 echo "-----> Cloned repo"
